@@ -1,0 +1,123 @@
+ - - FSM
+ `timescale 1ns / 1ps
+module fsm(RESET, CLK, CLR, W, CE, SEL, S);
+input RESET, CLK;
+output CLR;
+output[2:0] W;
+output[3:0] CE;
+output[1:0] SEL;
+output[2:0] S;
+reg CLR = 1'b0;
+reg[2:0] W = 3'b000;
+reg[3:0] CE = 4'b0000;
+reg[1:0] SEL = 2'b00;
+reg[2:0] S = 2'b000;
+reg[2:0] state;
+parameter s0 = 3'b000, s1 = 3'b001, s2 = 3'b010, s3 = 3'b011, s4 = 3'b100, s5 = 3'b101;
+always@(posedge CLK or posedge RESET) begin
+if(RESET) begin
+state <= s0;
+end
+else
+case(state)
+s0: begin
+state <= s1;
+end
+s1: begin
+state <= s2;
+end
+s2: begin
+state <= s3;
+end
+s3: begin
+
+tate <= s4;
+end
+s4: begin
+state <= s5;
+end
+s5: begin
+state <= s0;
+end
+default: begin
+state <= s0;
+end
+endcase
+end
+always@(state) begin
+case(state)
+s0: begin
+CLR <= 1'b1;
+W = 3'b000;
+CE = 4'b0000;
+SEL <= 2'b11;
+S = 3'b000;
+end
+s1: begin
+CLR <= 1'b0;
+W = 3'b000;
+CE = 4'b0001;
+SEL <= 2'b00;
+S = 3'b010;
+end
+s2: begin
+CLR <= 1'b0;
+W = 3'b000;
+CE = 4'b1000;
+SEL <= 2'b00;
+S = 3'b010;
+end
+s3: begin
+CLR <= 1'b0;
+W = 3'b010;
+
+
+CLR <= 1'b0;
+W = 3'b000;
+CE = 4'b1000;
+SEL <= 2'b10;
+S = 3'b001;
+end
+s5: begin
+CLR <= 1'b0;
+W = 3'b100;
+CE = 4'b0100;
+SEL <= 2'b10;
+S = 3'b001;
+end
+default: begin
+
+CE = 4'b0010;
+SEL <= 2'b01;
+S = 3'b001;
+end
+s4: begin
+CLR <= 1'b1;
+W = 3'b000;
+CE = 4'b0000;
+SEL <= 2'b11;
+S = 3'b000;
+end
+endcase
+end
+endmodule
+
+
+
+- - Top
+`timescale 1ns / 1ps
+module top(CLK, SW1, M0, M1, M2, Cin, R0, R1, R2);
+input CLK, SW1, Cin;
+input[3:0] M0, M1, M2;
+output[3:0] R0, R1, R2;
+wire CLR;
+wire[2:0] W;
+
+wire[3:0] CE;
+wire[1:0] SEL;
+wire[2:0] S;
+fsm g1(.RESET(SW1), .CLK(CLK), .CLR(CLR), .W(W), .CE(CE), .SEL(SEL), .S(S));
+datapath g2(.M0(M0), .M1(M1), .M2(M2), .Cin(Cin), .CLR(CLR), .W(W), .CE(CE),
+.SEL(SEL), .S(S),
+.CLK(CLK), .R0(R0), .R1(R1), .R2(R2));
+endmodule

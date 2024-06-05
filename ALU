@@ -1,0 +1,24 @@
+ - -ALU
+ 
+ `timescale 1ns / 1ps
+module alu(A, B, Cin, S, F);
+input[3:0] A, B;
+input Cin;
+input[2:0] S;
+
+output[3:0] F;
+
+reg[3:0] F;
+always@(S) begin
+case (S)
+3'b000: F = A + B + Cin;
+3'b001: F = A + ~B + Cin;
+3'b010: F = B;
+3'b011: F = A;
+3'b100: F = A & B;
+3'b101: F = A | B;
+3'b110: F = ~A;
+3'b111: F = A ^ B;
+endcase
+end
+endmodule
